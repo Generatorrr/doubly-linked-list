@@ -9,11 +9,11 @@ class LinkedList {
     }
 
     append(data) {
-    	var node = new Node(data);
+    	let node = new Node(data);
 
     	if (this.length) {
     		this._tail.next = node;
-    		node.previous = this._tail;
+    		node.prev = this._tail;
     		this._tail = node;
     	}
     	else {
@@ -22,40 +22,22 @@ class LinkedList {
     	}
     	this.length++;
 
-    	return node;
+    	return this;
     }
 
     head() {
-
-    	if (this._head) {
-    		return this._head.data;
-    	}
-    	else {
-    		return null;
-    	}
+        return this._head ? this._head.data : null;
     }
 
     tail() {
-
-    	if (this._tail) {
-    		return this._tail.data;
-    	}
-    	else {
-    		return null;
-    	}
+        return this._tail ? this._tail.data : null;
     }
 
     at(index) {
 
     	var sNode = this._head,
-    	length = this.length,
-    	count = 0;
-    	message = {failure: "Ошибка: в данном списке нет узлов."};
-
-    	if (index < 0 || index >= length) {
-        throw new Error(message.failure);
-    	}
-
+     	count = 0;
+    	
     	while (count < index) {
         sNode = sNode.next;
         count++;
@@ -67,7 +49,7 @@ class LinkedList {
     insertAt(index, data) {
 
     	var sNode = this._head,
-    	var insNode = new Node(data),
+    	insNode = new Node(data),
     	count = 0;
 
     	if (!sNode) {
@@ -83,7 +65,8 @@ class LinkedList {
     		insNode.next = sNode;
     		sNode.prev.next = insNode;
     		sNode.prev = insNode;
-    		this.length++;
+    		
+            this.length++;
     	}
 
     	return this;
@@ -91,12 +74,7 @@ class LinkedList {
 
     isEmpty() {
 
-    	if (this.length === 0) {
-    		return true;
-    	}
-    	else {
-    		return false;
-    	}
+    	return ( this.length === 0 ) ? true : false; 
 
     }
 
@@ -110,35 +88,38 @@ class LinkedList {
     }
 
     deleteAt(index) {
+        var sNode = this._head,
+            count = 0;
 
-    	if (index < this.length) {
+        if (index != 0) {
+            while (count < index) {
+                sNode = sNode.next;
+                count++;
+            } 
 
-			var node = this._head;
-            var count = 0;
-            while (i < index) {
-                node = node.next;
-                i++;
-        	}
-            while (i != this.length - 1) {
-                node.value = node.next.value;
-                this._tail = node;
-                node = node.next;
-                i++;
-            }
-            node.value = null;
-            node.next = null;
-            this.length--;
-            return this;
+            sNode.prev.next = sNode.next;
+            sNode.next.prev = sNode.prev;
         } 
         else {
-            throw new Error("Выбранный индекс превышает количество элементов.");
+            if ( this.length == 1 ) {
+                this.clear();
+            } 
+            else {
+                if (index == 0) {
+                    this._head = this._head.next;
+                    this._head.prev = null;
+                }
+                if (index == this.length - 1) {
+                    this._tail = this._tail.prev;
+                    this._tail.next = null;
+                }
+            }
         }
-
+        return this;
     }
 
     reverse() {
-
-    	while (true) {
+        while (true) {
             this._head.prev = [this._head.next, this._head.next = this._head.prev][0];
 
             if (!this._head.prev) break;
@@ -146,18 +127,17 @@ class LinkedList {
         }
         
         var sNode = this._head,
-            i = 1;
+            count = 1;
 
-        while (i < this.length) {
+        while (count < this.length) {
             sNode = sNode.next;
             count++;
         }
 
         this._tail = sNode;
 
-		return this;
-
-    }
+        return this;
+}
 
     indexOf(data) {
 
